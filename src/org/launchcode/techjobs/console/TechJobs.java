@@ -1,8 +1,6 @@
 package org.launchcode.techjobs.console;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Created by LaunchCode
@@ -14,36 +12,36 @@ public class TechJobs {
     public static void main (String[] args) {
 
         // Initialize our field map with key/name pairs
-        HashMap<String, String> columnChoices = new HashMap<>();
-        columnChoices.put("core competency", "Skill");
-        columnChoices.put("employer", "Employer");
-        columnChoices.put("location", "Location");
-        columnChoices.put("position type", "Position Type");
-        columnChoices.put("all", "All");
+        HashMap<String, String> categoryOptions = new HashMap<>();
+        categoryOptions.put("core competency", "Skill");
+        categoryOptions.put("employer", "Employer");
+        categoryOptions.put("location", "Location");
+        categoryOptions.put("position type", "Position Type");
+        categoryOptions.put("all", "All");
 
         // Top-level menu options
-        HashMap<String, String> actionChoices = new HashMap<>();
-        actionChoices.put("search", "Search");
-        actionChoices.put("list", "List");
+        HashMap<String, String> searchOptions = new HashMap<>();
+        searchOptions.put("search", "Search");
+        searchOptions.put("list", "List");
 
         System.out.println("Welcome to LaunchCode's TechJobs App!");
 
         // Allow the user to search until they manually quit
         while (true) {
 
-            String actionChoice = getUserSelection("View jobs by:", actionChoices);
+            String searchChoice = getUserSelection("View jobs by:", searchOptions);
 
-            if (actionChoice.equals("list")) {
+            if (searchChoice.equals("list")) {
 
-                String columnChoice = getUserSelection("List", columnChoices);
+                String chosenOption = getUserSelection("List", categoryOptions);
 
-                if (columnChoice.equals("all")) {
+                if (chosenOption.equals("all")) {
                     printJobs(JobData.findAll());
                 } else {
 
-                    ArrayList<String> results = JobData.findAll(columnChoice);
+                    ArrayList<String> results = JobData.findAll(chosenOption);
 
-                    System.out.println("\n*** All " + columnChoices.get(columnChoice) + " Values ***");
+                    System.out.println("\n*** All " + categoryOptions.get(chosenOption) + " Values ***");
 
                     // Print list of skills, employers, etc
                     for (String item : results) {
@@ -54,16 +52,16 @@ public class TechJobs {
             } else { // choice is "search"
 
                 // How does the user want to search (e.g. by skill or employer)
-                String searchField = getUserSelection("Search by:", columnChoices);
+                String searchCategory = getUserSelection("Search by:", categoryOptions);
 
                 // What is their search term?
                 System.out.println("\nSearch term: ");
                 String searchTerm = in.nextLine();
 
-                if (searchField.equals("all")) {
-                    System.out.println("Search all fields not yet implemented.");
+                if (searchCategory.equals("all")) {
+                    printJobs(JobData.findByValue(searchTerm));
                 } else {
-                    printJobs(JobData.findByColumnAndValue(searchField, searchTerm));
+                    printJobs(JobData.findByColumnAndValue(searchCategory, searchTerm));
                 }
             }
         }
@@ -110,7 +108,26 @@ public class TechJobs {
 
     // Print a list of jobs
     private static void printJobs(ArrayList<HashMap<String, String>> someJobs) {
+        //iterate over an ArrayList of jobs (allJobs)
+        //create nested loop that loops over each hashmap so that keys can update without needing to update this method
+        String positionType;
+        String name;
+        String employer;
+        String location;
+        String coreCompetency;
 
-        System.out.println("printJobs is not implemented yet");
+        if (someJobs.size() == 0 || someJobs == null) {
+            System.out.println("No Results");
+        } else {
+            for (HashMap<String, String> i : someJobs) {
+                System.out.println("\n*****");
+                for (Map.Entry<String, String> j : i.entrySet()) {
+                    String title = j.getKey();
+                    String job = j.getValue();
+                    System.out.println(title + ": " + job);
+                }
+                System.out.println("*****");
+            }
+        }
     }
 }
